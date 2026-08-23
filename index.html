@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fkra Tounsiya</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="wordmark" href="index.html">FKRA_TOUNSIYA</a>
+  <div class="nav-links">
+    <a href="index.html#essentials">Essentials</a>
+    <a href="index.html#drop">New Drop</a>
+    <a href="index.html#archive">Archive</a>
+  </div>
+  <a class="btn-contact" href="index.html#drop">Contact</a>
+</nav>
+
+<div class="hero">
+  <h1 id="drop-name">WINTER_ARC</h1>
+  <div class="cd" id="home-countdown">--</div>
+</div>
+<div class="hero-img"></div>
+
+<div class="sec-title" id="drop">// NEW DROP — <span id="drop-name-2"></span></div>
+<div class="grid" id="drop-grid"></div>
+
+<div class="sec-title" id="essentials">// ESSENTIALS — ALWAYS_ON</div>
+<div class="grid" id="essentials-grid"></div>
+
+<div class="sec-title" id="archive">// ARCHIVE — SEALED</div>
+<div class="grid" id="archive-grid"></div>
+<div class="archive-note">// Vaulted items are view-only and shown for reference. They are not for sale unless re-issued.</div>
+
+<footer class="simple">
+  <span>© Fkra Tounsiya</span>
+  <span>Tunis, Tunisia</span>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/countdown.js"></script>
+<script>
+  fkraSeedIfEmpty();
+  fkraCheckAutoArchive();
+
+  const dropMeta = fkraGetDropMeta();
+  document.getElementById("drop-name").textContent = dropMeta.name ? dropMeta.name.toUpperCase() : "NO ACTIVE DROP";
+  document.getElementById("drop-name-2").textContent = dropMeta.name || "—";
+
+  const cdEl = document.getElementById("home-countdown");
+  if (dropMeta.active && dropMeta.endsAt) {
+    fkraStartCountdown(cdEl, dropMeta.endsAt);
+  } else {
+    cdEl.textContent = "NO ACTIVE DROP";
+  }
+
+  function renderCard(p) {
+    const priceOrVault = p.section === "archive"
+      ? `<span class="vaulted">VAULTED</span>`
+      : `<span class="price">${p.price} DT</span>`;
+    return `
+      <a class="card" href="product.html?id=${p.id}">
+        <div class="swatch"></div>
+        <div class="meta">${p.name}<br>${priceOrVault}</div>
+      </a>`;
+  }
+
+  const products = fkraGetProducts();
+  document.getElementById("drop-grid").innerHTML =
+    products.filter(p => p.section === "drop").map(renderCard).join("") || `<div class="archive-note">No items in the current drop yet.</div>`;
+  document.getElementById("essentials-grid").innerHTML =
+    products.filter(p => p.section === "essentials").map(renderCard).join("");
+  document.getElementById("archive-grid").innerHTML =
+    products.filter(p => p.section === "archive").map(renderCard).join("");
+</script>
+</body>
+</html>

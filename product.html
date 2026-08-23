@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fkra Tounsiya — Product</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="wordmark" href="index.html">FKRA_TOUNSIYA</a>
+  <div class="nav-links">
+    <a href="index.html#essentials">Essentials</a>
+    <a href="index.html#drop">New Drop</a>
+    <a href="index.html#archive">Archive</a>
+  </div>
+  <a class="btn-contact" href="index.html">Back</a>
+</nav>
+
+<div class="product-wrap" id="product-root">
+  <!-- filled by JS -->
+</div>
+
+<footer class="simple">
+  <span>© Fkra Tounsiya</span>
+  <span>Tunis, Tunisia</span>
+</footer>
+
+<script src="js/tunisia-locations.js"></script>
+<script src="js/data.js"></script>
+<script>
+  fkraSeedIfEmpty();
+  fkraCheckAutoArchive();
+
+  const params = new URLSearchParams(window.location.search);
+  const productId = params.get("id");
+  const product = fkraGetProduct(productId);
+  const root = document.getElementById("product-root");
+
+  if (!product) {
+    root.innerHTML = `<p style="padding:26px;">Item not found. <a href="index.html">Back to shop</a></p>`;
+  } else {
+    const isVaulted = product.section === "archive" && !product.reissued;
+
+    root.innerHTML = `
+      <div class="product-img"></div>
+      <div class="product-info">
+        <h1>${product.name}</h1>
+        ${isVaulted
+          ? `<div class="vaulted-label">VAULTED — not currently for sale</div>`
+          : `<div class="price">${product.price} DT</div>`}
+
+        <div class="option-group">
+          <div class="label">COLOR</div>
+          <div class="option-row" id="color-row"></div>
+        </div>
+        <div class="option-group">
+          <div class="label">SIZE</div>
+          <div class="option-row" id="size-row"></div>
+        </div>
+
+        ${isVaulted
+          ? `<button class="btn-primary" disabled>NOT AVAILABLE — VAULTED</button>`
+          : `<button class="btn-primary" id="inquire-btn">SEND INQUIRY</button>`}
+      </div>
+    `;
+
+    let selectedColor = product.colors[0] || null;
+    let selectedSize = product.sizes[0] || null;
+
+    function renderPills(containerId, options, selected, onPick) {
+      const el = document.getElementById(containerId);
+      el.innerHTML = options.map(opt =>
+        `<div class="option-pill ${opt === selected ? "selected" : ""}" data-val="${opt}">${opt}</div>`
+      ).join("");
+      el.querySelectorAll(".option-pill").forEach(pill => {
+        pill.addEventListener("click", () => {
+          onPick(pill.dataset.val);
+          renderPills(containerId, options, pill.dataset.val, onPick);
+        });
+      });
+    }
+
+    renderPills("color-row", product.colors, selectedColor, v => selectedColor = v);
+    renderPills("size-row", product.sizes, selectedSize, v => selectedSize = v);
+
+    if (!isVaulted) {
+      document.getElementById("inquire-btn").addEventListener("click", () => {
+        showInquiryForm();
+      });
+    }
+
+    function showInquiryForm() {
+      if (document.getElementById("inquiry-form-el")) return;
+
+      const stateOptions = Object.keys(TUNISIA_LOCATIONS)
+        .map(s => `<option value="${s}">${s}</option>`).join("");
+
+      const formHtml = `
+        <form class="inquiry-form" id="inquiry-form-el">
+          <div class="sec-title" style="padding-left:0;border-top:none;">SEND INQUIRY — ${product.name}</div>
+
+          <div><div class="label">FULL NAME</div><input type="text" id="f-name" required></div>
+          <div><div class="label">PHONE NUMBER</div><input type="tel" id="f-phone" required></div>
+          <div><div class="label">ADDRESS</div><input type="text" id="f-address" required></div>
+
+          <div>
+            <div class="label">STATE</div>
+            <select id="f-state" required>
+              <option value="">-- Select state --</option>
+              ${stateOptions}
+            </select>
+          </div>
+          <div>
+            <div class="label">CITY</div>
+            <select id="f-city" required disabled>
+              <option value="">-- Select state first --</option>
+            </select>
+          </div>
+
+          <div><div class="label">NOTE (OPTIONAL)</div><textarea id="f-note"></textarea></div>
+
+          <button type="submit" class="btn-primary">SUBMIT INQUIRY</button>
+          <div class="form-msg" id="form-msg"></div>
+        </form>
+      `;
+      root.insertAdjacentHTML("beforeend", formHtml);
+
+      const stateSel = document.getElementById("f-state");
+      const citySel = document.getElementById("f-city");
+      stateSel.addEventListener("change", () => {
+        const cities = TUNISIA_LOCATIONS[stateSel.value] || [];
+        if (cities.length) {
+          citySel.disabled = false;
+          citySel.innerHTML = `<option value="">-- Select city --</option>` +
+            cities.map(c => `<option value="${c}">${c}</option>`).join("");
+        } else {
+          citySel.disabled = true;
+          citySel.innerHTML = `<option value="">-- Select state first --</option>`;
+        }
+      });
+
+      document.getElementById("inquiry-form-el").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const inquiry = {
+          productId: product.id,
+          productName: product.name,
+          color: selectedColor,
+          size: selectedSize,
+          name: document.getElementById("f-name").value,
+          phone: document.getElementById("f-phone").value,
+          address: document.getElementById("f-address").value,
+          state: stateSel.value,
+          city: citySel.value,
+          note: document.getElementById("f-note").value
+        };
+        fkraAddInquiry(inquiry);
+        document.getElementById("form-msg").className = "form-msg ok";
+        document.getElementById("form-msg").textContent = "Inquiry sent — we'll reach out shortly.";
+        document.getElementById("inquiry-form-el").reset();
+        citySel.disabled = true;
+        citySel.innerHTML = `<option value="">-- Select state first --</option>`;
+      });
+    }
+  }
+</script>
+</body>
+</html>
