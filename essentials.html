@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>Fkra Tounsiya — Essentials</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --fg: #111111; --muted: #888888; --line: #cccccc; --swatch: #eaeaea;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0d0d0d; --fg: #f2f2f2; --muted: #888888; --line: #333333; --swatch: #1c1c1c; }
+  }
+  body { background: var(--bg); color: var(--fg); font-family: 'Courier New', monospace; letter-spacing: 0.3px; }
+  a { color: inherit; }
+
+  .topnav { display: flex; align-items: center; justify-content: space-between; padding: 18px 26px; border-bottom: 0.5px solid var(--line); }
+  .wordmark { font-size: 13px; letter-spacing: 2px; text-decoration: none; }
+  .btn-contact { font-size: 11px; text-transform: uppercase; border: 0.5px solid var(--fg); padding: 6px 12px; text-decoration: none; }
+
+  .page-head { padding: 40px 26px 10px; }
+  .page-head h1 { font-size: 20px; letter-spacing: 2px; text-transform: uppercase; }
+  .page-head .sub { font-size: 11px; color: var(--muted); padding-top: 6px; }
+
+  /* ---------- Infinite carousel ---------- */
+  .carousel-wrap { display: flex; align-items: center; gap: 8px; padding: 30px 10px 40px; }
+  .carousel-arrow {
+    flex-shrink: 0; width: 34px; height: 34px; border: 0.5px solid var(--line);
+    background: var(--bg); color: var(--fg); font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .carousel-track-outer { overflow-x: scroll; scrollbar-width: none; -ms-overflow-style: none; }
+  .carousel-track-outer::-webkit-scrollbar { display: none; }
+  .carousel-track { display: flex; gap: 14px; }
+  .carousel-card {
+    flex-shrink: 0; width: 150px; text-decoration: none; color: var(--fg);
+    border: 0.5px solid var(--line);
+  }
+  .carousel-card .swatch { width: 100%; height: 150px; background: var(--swatch); filter: grayscale(0.35); }
+  .carousel-card .meta { font-size: 10px; padding: 8px; border-top: 0.5px solid var(--line); line-height: 1.5; }
+  .carousel-card .meta .price { color: var(--fg); }
+
+  footer.site-footer { border-top: 0.5px solid var(--line); padding: 26px 26px 20px; width: 100%; text-align: center; }
+  .footer-links { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; padding-bottom: 14px; }
+  .footer-links a { font-size: 11px; text-decoration: none; color: var(--fg); letter-spacing: 0.5px; }
+  .footer-meta { font-size: 10px; color: var(--muted); letter-spacing: 0.5px; display: flex; flex-direction: column; align-items: center; gap: 3px; padding-bottom: 14px; }
+  .footer-bottom { display: flex; justify-content: center; gap: 20px; align-items: center; padding-top: 14px; border-top: 0.5px solid var(--line); font-size: 10px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="wordmark" href="index.html">FKRA_TOUNSIYA</a>
+  <a class="btn-contact" href="#">Contact</a>
+</nav>
+
+<div class="page-head">
+  <h1>Essentials</h1>
+  <div class="sub">Always available — the basics.</div>
+</div>
+
+<div class="carousel-wrap">
+  <div class="carousel-arrow" id="ess-prev">‹</div>
+  <div class="carousel-track-outer" id="ess-outer">
+    <div class="carousel-track" id="ess-track"></div>
+  </div>
+  <div class="carousel-arrow" id="ess-next">›</div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="essentials.html">Essentials</a>
+    <a href="drop.html">New Drop</a>
+    <a href="archive.html">Archive</a>
+    <a href="#">Contact</a>
+  </div>
+  <div class="footer-meta">
+    <span>hello@fkratounsiya.com</span>
+    <span>Tunis, Tunisia</span>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Fkra Tounsiya</span>
+    <span>Made in Tunisia</span>
+  </div>
+</footer>
+
+<script>
+  const ESSENTIALS = [
+    { name: "Base Tee — Black", price: 95 },
+    { name: "Base Hoodie", price: 180 },
+    { name: "Base Cap", price: 65 },
+    { name: "Base Crewneck", price: 150 },
+    { name: "Base Shorts", price: 110 }
+  ];
+
+  function buildInfiniteCarousel(outerId, trackId, prevId, nextId, items, cardWidth = 150, gap = 14) {
+    const outer = document.getElementById(outerId);
+    const track = document.getElementById(trackId);
+    const prevBtn = document.getElementById(prevId);
+    const nextBtn = document.getElementById(nextId);
+
+    function cardHtml(p) {
+      return `
+        <a class="carousel-card" href="#">
+          <div class="swatch"></div>
+          <div class="meta">${p.name}<br><span class="price">${p.price} DT</span></div>
+        </a>`;
+    }
+
+    // Triple the list so we can scroll infinitely in both directions
+    // and silently reset position once we drift into the outer copies.
+    const tripled = [...items, ...items, ...items];
+    track.innerHTML = tripled.map(cardHtml).join("");
+
+    const setWidth = items.length * (cardWidth + gap);
+    outer.scrollLeft = setWidth; // start in the middle copy
+
+    function checkLoop() {
+      if (outer.scrollLeft < setWidth * 0.5) {
+        outer.scrollLeft += setWidth;
+      } else if (outer.scrollLeft > setWidth * 1.5) {
+        outer.scrollLeft -= setWidth;
+      }
+    }
+    outer.addEventListener("scroll", checkLoop);
+
+    prevBtn.addEventListener("click", () => {
+      outer.scrollBy({ left: -(cardWidth + gap) * 2, behavior: "smooth" });
+    });
+    nextBtn.addEventListener("click", () => {
+      outer.scrollBy({ left: (cardWidth + gap) * 2, behavior: "smooth" });
+    });
+  }
+
+  buildInfiniteCarousel("ess-outer", "ess-track", "ess-prev", "ess-next", ESSENTIALS);
+</script>
+</body>
+</html>

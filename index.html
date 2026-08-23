@@ -3,77 +3,200 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
 <title>Fkra Tounsiya</title>
-<link rel="stylesheet" href="css/style.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --fg: #111111;
+    --muted: #888888;
+    --line: #cccccc;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d0d0d;
+      --fg: #f2f2f2;
+      --muted: #888888;
+      --line: #333333;
+    }
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.3px;
+  }
+  a { color: inherit; }
+
+  .topnav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 26px; border-bottom: 0.5px solid var(--line);
+  }
+  .wordmark { font-size: 13px; letter-spacing: 2px; text-decoration: none; white-space: nowrap; }
+  .cursor { display: inline-block; width: 7px; background: var(--fg); margin-left: 2px; animation: blink 0.9s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .btn-contact { font-size: 11px; text-transform: uppercase; border: 0.5px solid var(--fg); padding: 6px 12px; text-decoration: none; }
+
+  .wrap {
+    max-width: 480px;
+    padding: 50px 26px;
+  }
+  .catalogue-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 24px;
+  }
+  .section-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .section-link {
+    display: block;
+    text-decoration: none;
+    color: var(--fg);
+    padding: 18px 0;
+    text-align: left;
+  }
+  .section-link .title {
+    font-size: 18px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    min-height: 22px;
+  }
+  .section-link .sub {
+    font-size: 10px;
+    color: var(--muted);
+    padding-top: 6px;
+    letter-spacing: 1px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .section-link .sub.shown { opacity: 1; }
+
+  /* ---------- Footer (short, full-width, centered) ---------- */
+  footer.site-footer {
+    border-top: 0.5px solid var(--line);
+    padding: 26px 26px 20px;
+    width: 100%;
+    text-align: center;
+  }
+  .footer-links {
+    display: flex; gap: 18px; flex-wrap: wrap;
+    justify-content: center;
+    padding-bottom: 14px;
+  }
+  .footer-links a {
+    font-size: 11px; text-decoration: none; color: var(--fg); letter-spacing: 0.5px;
+  }
+  .footer-meta {
+    font-size: 10px; color: var(--muted); letter-spacing: 0.5px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px; padding-bottom: 14px;
+  }
+  .footer-bottom {
+    display: flex; justify-content: center; gap: 20px; align-items: center;
+    padding-top: 14px; border-top: 0.5px solid var(--line);
+    font-size: 10px; color: var(--muted);
+  }
+</style>
 </head>
 <body>
 
 <nav class="topnav">
-  <a class="wordmark" href="index.html">FKRA_TOUNSIYA</a>
-  <div class="nav-links">
-    <a href="index.html#essentials">Essentials</a>
-    <a href="index.html#drop">New Drop</a>
-    <a href="index.html#archive">Archive</a>
-  </div>
-  <a class="btn-contact" href="index.html#drop">Contact</a>
+  <span class="wordmark" id="wordmark-type"></span>
+  <a class="btn-contact" href="#">Contact</a>
 </nav>
 
-<div class="hero">
-  <h1 id="drop-name">WINTER_ARC</h1>
-  <div class="cd" id="home-countdown">--</div>
+<div class="wrap">
+  <div class="catalogue-label">// OUR CATALOGUE</div>
+
+  <div class="section-list">
+    <a class="section-link" href="essentials.html">
+      <div class="title" id="title-essentials"></div>
+      <div class="sub" id="sub-essentials">Always available — the basics</div>
+    </a>
+    <a class="section-link" href="drop.html">
+      <div class="title" id="title-drop"></div>
+      <div class="sub" id="sub-drop">Winter Arc — limited time</div>
+    </a>
+    <a class="section-link" href="archive.html">
+      <div class="title" id="title-archive"></div>
+      <div class="sub" id="sub-archive">Past drops — vaulted</div>
+    </a>
+  </div>
 </div>
-<div class="hero-img"></div>
 
-<div class="sec-title" id="drop">// NEW DROP — <span id="drop-name-2"></span></div>
-<div class="grid" id="drop-grid"></div>
-
-<div class="sec-title" id="essentials">// ESSENTIALS — ALWAYS_ON</div>
-<div class="grid" id="essentials-grid"></div>
-
-<div class="sec-title" id="archive">// ARCHIVE — SEALED</div>
-<div class="grid" id="archive-grid"></div>
-<div class="archive-note">// Vaulted items are view-only and shown for reference. They are not for sale unless re-issued.</div>
-
-<footer class="simple">
-  <span>© Fkra Tounsiya</span>
-  <span>Tunis, Tunisia</span>
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="essentials.html">Essentials</a>
+    <a href="drop.html">New Drop</a>
+    <a href="archive.html">Archive</a>
+    <a href="#">Contact</a>
+  </div>
+  <div class="footer-meta">
+    <span>hello@fkratounsiya.com</span>
+    <span>Tunis, Tunisia</span>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Fkra Tounsiya</span>
+    <span>Made in Tunisia</span>
+  </div>
 </footer>
 
-<script src="js/data.js"></script>
-<script src="js/countdown.js"></script>
 <script>
-  fkraSeedIfEmpty();
-  fkraCheckAutoArchive();
-
-  const dropMeta = fkraGetDropMeta();
-  document.getElementById("drop-name").textContent = dropMeta.name ? dropMeta.name.toUpperCase() : "NO ACTIVE DROP";
-  document.getElementById("drop-name-2").textContent = dropMeta.name || "—";
-
-  const cdEl = document.getElementById("home-countdown");
-  if (dropMeta.active && dropMeta.endsAt) {
-    fkraStartCountdown(cdEl, dropMeta.endsAt);
-  } else {
-    cdEl.textContent = "NO ACTIVE DROP";
+  // Type the top wordmark, with a persistent blinking cursor.
+  function typeWithCursor(el, text, speed, onDone) {
+    let i = 0;
+    function step() {
+      if (i <= text.length) {
+        el.innerHTML = text.slice(0, i) + '<span class="cursor">&nbsp;</span>';
+        i++;
+        setTimeout(step, speed);
+      } else if (onDone) {
+        onDone();
+      }
+    }
+    step();
   }
 
-  function renderCard(p) {
-    const priceOrVault = p.section === "archive"
-      ? `<span class="vaulted">VAULTED</span>`
-      : `<span class="price">${p.price} DT</span>`;
-    return `
-      <a class="card" href="product.html?id=${p.id}">
-        <div class="swatch"></div>
-        <div class="meta">${p.name}<br>${priceOrVault}</div>
-      </a>`;
+  // Type a section title with no cursor, then reveal its subtitle, then call onDone.
+  function typeTitle(el, subEl, text, speed, onDone) {
+    let i = 0;
+    function step() {
+      if (i <= text.length) {
+        el.textContent = text.slice(0, i);
+        i++;
+        setTimeout(step, speed);
+      } else {
+        if (subEl) subEl.classList.add("shown");
+        setTimeout(() => { if (onDone) onDone(); }, 150);
+      }
+    }
+    step();
   }
 
-  const products = fkraGetProducts();
-  document.getElementById("drop-grid").innerHTML =
-    products.filter(p => p.section === "drop").map(renderCard).join("") || `<div class="archive-note">No items in the current drop yet.</div>`;
-  document.getElementById("essentials-grid").innerHTML =
-    products.filter(p => p.section === "essentials").map(renderCard).join("");
-  document.getElementById("archive-grid").innerHTML =
-    products.filter(p => p.section === "archive").map(renderCard).join("");
+  const wordmarkEl = document.getElementById("wordmark-type");
+
+  typeWithCursor(wordmarkEl, "FKRA_TOUNSIYA", 70, () => {
+    // Once the wordmark finishes, type each section title in sequence.
+    const sections = [
+      { title: document.getElementById("title-essentials"), sub: document.getElementById("sub-essentials"), text: "Essentials" },
+      { title: document.getElementById("title-drop"), sub: document.getElementById("sub-drop"), text: "New Drop" },
+      { title: document.getElementById("title-archive"), sub: document.getElementById("sub-archive"), text: "Archive" }
+    ];
+    let idx = 0;
+    function next() {
+      if (idx >= sections.length) return;
+      const s = sections[idx];
+      idx++;
+      typeTitle(s.title, s.sub, s.text, 45, next);
+    }
+    next();
+  });
 </script>
 </body>
 </html>
