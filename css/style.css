@@ -38,6 +38,24 @@ a { color: inherit; }
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
   padding: 0 26px 30px;
 }
+
+/* ---------- Infinite horizontal carousel ---------- */
+.carousel-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 20px 14px 34px;
+}
+.carousel-arrow {
+  flex-shrink: 0; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+  border: 0.5px solid var(--line, #999); background: transparent; color: inherit;
+  font-size: 16px; cursor: pointer; border-radius: 2px;
+}
+.carousel-viewport { overflow: hidden; flex: 1; }
+.carousel-track { display: flex; gap: 14px; will-change: transform; }
+.carousel-track .card {
+  flex: 0 0 150px; width: 150px;
+}
+.carousel-track .card .swatch { height: 190px; }
+
 .card {
   border: 0.5px solid #999; text-decoration: none; color: #111; display: block;
 }
